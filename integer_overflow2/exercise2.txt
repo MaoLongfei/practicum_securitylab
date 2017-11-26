@@ -1,0 +1,14 @@
+The biggest difference between exercise1 and exercise2 is that addresses of functions in the server are not the same as that in my own binary.
+
+As can be found from hopper, all functions needed in the exercise(print_flag, malloc, list_sentry) are all in handler binary.
+
+Solution:
+	1. get the offsets of these 3 functions with the local base address by hopper
+	2. get the address of list_sentry on server by exploit the position -1
+	3. calculate the offset of local base address and the server base address
+	4. calculate the address of print_flag, malloc function on server
+	5. repeat the process of exercise 1 with the new addresses
+
+The way to find list_sentry as vulnerability is to use "x/20gx + struct-address(I'm not sure if that is the struct address, but the value will be stored in R12 when show_dataset, and this value points at the position of dataset's name)" and disassemble possible the resules in gdb, functions have special outputs.
+
+By the way, the big challenges in this time work are all with the double format. I spent about 5-10 hours finding my first input (123, 456, 789), but the double format makes that almost an impossible mission. But if the data format were long, all works will be too easy and boring. So I suggest, maybe for the next semester, some explains about the double format in the slides will make the situation better.

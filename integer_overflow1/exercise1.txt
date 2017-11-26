@@ -1,0 +1,22 @@
+gdb server
+	by handler:	x print_flag	=> 0x401dcc
+	pdisass handle:
+		=> get the assemble code of handle_client function
+		=> chose a function which in format <function_name@plt> and called by handle_client 
+			(0x400bc0 <malloc@plt>, don't choose fputs/fgets)
+		=> disassemble 0x400bc0, and in the end of the 1st line can get the address of malloc in GOT(0x6040a8)
+
+target of this exercise:
+	change the value stored in 0x6040a8 into the address of print_flag(0x401dcc)
+
+Vulnerability of the binary:
+	When the user choose to correct values in the array, the system only compare the user's input with the size of the array. However, the user's input are stored as a signed integer(not exactly as "int", maybe long or something else, but exactly signed.) And as a result, if the user inputs a negative value, it will be also accepted, letting the use be able to get and change data(but in double format) in memory.
+
+Solution:
+	=> create a dataset, tell the server to correct the -4-th value (which is a pointer, pointing at the address of the array)
+		=> change the value to the address of malloc in GOT
+	=> tell the server to correct the 1st value, which is now a pointer, pointing at the address of malloc function
+		=> change the value to the address of print_flag function
+	=> as malloc now is actually pointing at the print_flag function, just let the server run malloc by creating another dataset. 
+
+Actually I don't understand what are get_doubles_from() and read_data() functions should do in the attack. And some other functions such write_data, delete_dadaset are also not used in my process, so I didn't implement or use them finally.
